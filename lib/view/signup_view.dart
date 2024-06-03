@@ -1,26 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:mvvm/repository/auth_repository.dart';
 import 'package:mvvm/res/components/round_button.dart';
 import 'package:mvvm/utils/routes/routes_name.dart';
 import 'package:mvvm/utils/utils.dart';
 import 'package:mvvm/view_model/auth_view_model.dart';
 import 'package:provider/provider.dart';
 
-class LoginView extends StatefulWidget {
-  const LoginView({super.key});
+
+
+class SignUpView extends StatefulWidget {
+  const SignUpView({super.key});
 
   @override
-  State<LoginView> createState() => _LoginViewState();
+  State<SignUpView> createState() => _SignUpViewState();
 }
 
-class _LoginViewState extends State<LoginView> {
+class _SignUpViewState extends State<SignUpView> {
 
   ValueNotifier<bool> _obsecurePassword = ValueNotifier<bool>(true);
 
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
 
-  // to shift focus of cursor from one field to another when one field is done*
+// to shift focus of cursor from one field to another when one field is done*
   FocusNode emailFocusNode = FocusNode();
   FocusNode passwordFocusNode = FocusNode();
 
@@ -43,7 +44,7 @@ class _LoginViewState extends State<LoginView> {
 
     final height = MediaQuery.of(context).size.height*1;
     return Scaffold(
-      appBar: AppBar(title: Text('Login'),centerTitle: true,),
+      appBar: AppBar(title: Text('Signup'),centerTitle: true,),
 
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -54,9 +55,9 @@ class _LoginViewState extends State<LoginView> {
             keyboardType: TextInputType.emailAddress,
             focusNode: emailFocusNode,
             decoration: const InputDecoration(
-              hintText: 'Email',
-              labelText: 'Email',
-              prefixIcon: Icon(Icons.email)
+                hintText: 'Email',
+                labelText: 'Email',
+                prefixIcon: Icon(Icons.email)
             ),
             onFieldSubmitted: (valu){
               Utils.fieldFocusChange(context, emailFocusNode, passwordFocusNode);
@@ -65,33 +66,33 @@ class _LoginViewState extends State<LoginView> {
 
           ValueListenableBuilder(valueListenable: _obsecurePassword,
               builder: (context, value, child){
-            return TextFormField(
-              controller: _passwordController,
-              focusNode: passwordFocusNode,
-             obscureText: _obsecurePassword.value,
-              obscuringCharacter: "*",
+                return TextFormField(
+                  controller: _passwordController,
+                  focusNode: passwordFocusNode,
+                  obscureText: _obsecurePassword.value,
+                  obscuringCharacter: "*",
 
-              decoration: InputDecoration(
-                hintText: 'Password',
-                labelText: 'Password',
-                prefixIcon: Icon(Icons.lock_open_rounded),
-                // suffixIcon: Icon(Icons.visibility_off),
-                suffixIcon: InkWell(
-                  onTap: (){
-                    _obsecurePassword.value = !_obsecurePassword.value;
+                  decoration: InputDecoration(
+                    hintText: 'Password',
+                    labelText: 'Password',
+                    prefixIcon: Icon(Icons.lock_open_rounded),
+                    // suffixIcon: Icon(Icons.visibility_off),
+                    suffixIcon: InkWell(
+                      onTap: (){
+                        _obsecurePassword.value = !_obsecurePassword.value;
+                      },
+                      child: Icon(_obsecurePassword.value? Icons.visibility_off: Icons.visibility),
+                    ),
+                  ),
+                  onFieldSubmitted: (valu){
+                    Utils.fieldFocusChange(context, emailFocusNode, passwordFocusNode);
                   },
-                  child: Icon(_obsecurePassword.value? Icons.visibility_off: Icons.visibility),
-                ),
-              ),
-              onFieldSubmitted: (valu){
-                Utils.fieldFocusChange(context, emailFocusNode, passwordFocusNode);
-              },
 
-            );
-          }
+                );
+              }
           ),
           SizedBox(height: height*0.085,),
-          RoundButton(title: 'Login', loading: authViewModel.loading ,onPress: (){
+          RoundButton(title: 'Signup', loading: authViewModel.signupLoading ,onPress: (){
             if(_emailController.text.isEmpty){
               Utils.flushBarErrorMessage('email required', context);
             }
@@ -102,25 +103,21 @@ class _LoginViewState extends State<LoginView> {
               Utils.flushBarErrorMessage('pw should be of atleast 6 characters', context);
             }
             else{
-              // Map data ={
-              //   'email': _emailController.text.toString(),
-              //   'password': _passwordController.text.toString(),
-              // };
               Map data ={
-                'email': 'eve.holt@reqres.in',
-                'password': 'cityslicka',
+                'email': _emailController.text.toString(),
+                'password': _passwordController.text.toString(),
               };
-              authViewModel.loginApi(data, context);
+              authViewModel.signupApi(data, context);
               print('API hit');
             }
           }),
           SizedBox(height: height*0.02,),
 
           InkWell(
-            child: Text("Dont't have an account? SIGNUP"),
             onTap: (){
-              Navigator.pushNamed(context, RoutesName.signup);
+              Navigator.pushNamed(context, RoutesName.login);
             },
+            child: Text("Already have an account? Login"),
           )
 
         ],
